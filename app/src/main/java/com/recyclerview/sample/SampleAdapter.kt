@@ -9,7 +9,8 @@ import com.bumptech.glide.Glide
 import com.recyclerview.sample.model.Profile
 import kotlinx.android.synthetic.main.item_layout.view.*
 
-class SampleAdapter(private val mutableList: MutableList<Profile>) : RecyclerView.Adapter<SampleAdapter.SampleHolder>() {
+class SampleAdapter(private var mutableList: MutableList<Profile>) :
+    RecyclerView.Adapter<SampleAdapter.SampleHolder>() {
 
     override fun getItemCount(): Int {
         return mutableList.size
@@ -54,12 +55,14 @@ class SampleAdapter(private val mutableList: MutableList<Profile>) : RecyclerVie
 
     fun update(profile: Profile?) {
         profile ?: return
+        val oldList = mutableList
         val newList = mutableListOf<Profile>()
         newList.addAll(mutableList)
         val indexOf = newList.indexOfFirst { it.id == profile.id }
         if (indexOf != -1) {
             newList[indexOf] = profile
-            val result = DiffUtil.calculateDiff(SampleDiffCallBack(mutableList, newList))
+            val result = DiffUtil.calculateDiff(SampleDiffCallBack(oldList, newList))
+            mutableList = newList
             result.dispatchUpdatesTo(this)
         }
     }
@@ -92,24 +95,6 @@ class SampleAdapter(private val mutableList: MutableList<Profile>) : RecyclerVie
                 with(itemView) {
                     Glide.with(this).load(profile.image).centerCrop().into(image)
                 }
-            }
-        }
-    }
-
-    class SampleDiff : DiffUtil.ItemCallback<Profile>() {
-        override fun areItemsTheSame(oldItem: Profile, newItem: Profile): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Profile, newItem: Profile): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun getChangePayload(oldItem: Profile, newItem: Profile): Any? {
-            return when {
-                oldItem.name != newItem.name -> Payload.TITLE
-                oldItem.image != newItem.image -> Payload.IMAGE
-                else -> null
             }
         }
     }

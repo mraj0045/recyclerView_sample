@@ -2,6 +2,7 @@ package com.recyclerview.sample
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.ChildEventListener
@@ -13,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val adapter: SampleAdapter = SampleAdapter(mutableListOf())
+    private val adapter: SampleAdapterOne = SampleAdapterOne()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
             adapter = this@MainActivity.adapter
             addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
         }
+        App.APP_DATABASE.profileDao().getAll().observe(this, Observer {
+            adapter.submitList(it)
+        })
     }
 
     private fun firebaseInit() {
@@ -42,15 +46,19 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                adapter.update(p0.getValue(Profile::class.java))
+                val profile = p0.getValue(Profile::class.java)
+                profile?.let { App.APP_DATABASE.profileDao().insert(it) }
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                adapter.add(p0.getValue(Profile::class.java))
+                val profile = p0.getValue(Profile::class.java)
+                profile?.let { App.APP_DATABASE.profileDao().insert(it) }
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {
-                adapter.remove(p0.getValue(Profile::class.java))
+
+                val profile = p0.getValue(Profile::class.java)
+                profile?.let { App.APP_DATABASE.profileDao().delete(it) }
             }
         })
     }

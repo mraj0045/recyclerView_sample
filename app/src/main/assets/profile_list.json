@@ -1,0 +1,24 @@
+{
+  "list": [
+    {
+      "id": 1,
+      "image": "https://via.placeholder.com/700X400/81C784/image.png?text=%22%22",
+      "name": "Title One"
+    },
+    {
+      "id": 2,
+      "image": "https://via.placeholder.com/700X400/9575CD/image.png?text=%22%22",
+      "name": "Title Two"
+    },
+    {
+      "id": 3,
+      "image": "https://via.placeholder.com/700X400/F06292/image.png?text=%22%22",
+      "name": "Title Three"
+    },
+    {
+      "id": 4,
+      "image": "https://via.placeholder.com/700X400/64B5F6/image.png?text=%22%22",
+      "name": "Title Four"
+    }
+  ]
+}
